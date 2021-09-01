@@ -1,0 +1,7 @@
+﻿<MudSelect T="int" Label="Speaker" MultiSelection="true" Value="value" SelectedValues="Values" SelectedValuesChanged="SpeakersChanged"
+           MultiSelectionTextFunc="new Func<List<string>, string>(GetMultiSelectionText)">
+    @foreach (var s in _speakers)
+    {
+        <MudSelectItem T="int" Value="@s.Id">@s.FirstName @s.LastName</MudSelectItem>
+    }
+</MudSelect>
