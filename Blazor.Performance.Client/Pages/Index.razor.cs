@@ -16,26 +16,27 @@ namespace Blazor.Performance.Client.Pages
         [Inject] public IDialogService DialogService { get; set; }
 
         private bool isLoading = false;
-        private IEnumerable<Speaker> Speakers = new List<Speaker>();
-        private IEnumerable<Contribution> Contributions = new List<Contribution>();
         private string searchTerm = String.Empty;
-        private IEnumerable<Contribution> allContributions = new List<Contribution>();
+        private ICollection<Contribution> Contributions = new List<Contribution>();
+        private ICollection<Contribution> allContributions = new List<Contribution>();
 
         protected override async Task OnInitializedAsync()
         {
             isLoading = true;
-            Speakers = await DataService.GetSpeakersAsync();
             Contributions = await DataService.GetContributionsAsync();
             allContributions = Contributions;
             isLoading = false;
             await base.OnInitializedAsync();
         }
 
-        private void SearchTermChanged(ChangeEventArgs eventArgs)
+        private void SearchTermChanged(string term)
         {
-            var value = eventArgs.Value.ToString();
-            Contributions = String.IsNullOrWhiteSpace(value) ? allContributions : allContributions.Where(c => c.Title.Contains(value));
-            searchTerm = value;
+            Contributions = String.IsNullOrWhiteSpace(term) 
+                ? allContributions 
+                : allContributions
+                    .Where(c => c.Title.Contains(term))
+                    .ToList();
+            searchTerm = term;
         }
 
         private async Task ContributionClicked(int id)
@@ -47,6 +48,7 @@ namespace Blazor.Performance.Client.Pages
             if (!result.Cancelled)
             {
                 Contributions = await DataService.GetContributionsAsync();
+                StateHasChanged();
             }
         }
     }

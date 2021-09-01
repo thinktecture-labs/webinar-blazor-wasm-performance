@@ -1,27 +1,15 @@
 ﻿<MudDialog>
     <DialogContent>
-        <EditForm class="edit-form" Model="_contribution">
-            <div class="group">
-                <input type="text" required="required" @bind-value="_contribution.Title"/><span class="highlight"></span><span class="bar"></span>
-                <label>Title</label>
-            </div>
-            <div class="group">
-                <input type="text" required="required" @bind-value="_contribution.Type"/><span class="highlight"></span><span class="bar"></span>
-                <label>Type</label>
-            </div>
-            <div class="group">
-                <input type="text" required="required" @bind-value="_contribution.PrimaryTag"/><span class="highlight"></span><span class="bar"></span>
-                <label>Primary Tag</label>
-            </div>
-            <SpeakerSelect @bind-Value="_contribution.Speaker"></SpeakerSelect>
-            <div class="group">
-                <textarea type="textarea" rows="5" required="required" @bind-value="_contribution.Abstract" @bind-value:event="oninput"></textarea><span class="highlight"></span><span class="bar"></span>
-                <label>Abstract</label>
-            </div>
+        <EditForm class="edit-form" Model="_contribution" OnSubmit="Submit">
+            <CustomInput @bind-Value="_contribution.Title" Required="@true" Label="Titel"></CustomInput>
+            <CustomInput @bind-Value="_contribution.Type" Required="@true" Label="Typ"></CustomInput>
+            <CustomInput @bind-Value="_contribution.PrimaryTag" PreventRendering="@false" Required="@true" Label="Primary Tag"></CustomInput>
+            <SpeakerSelect @bind-Values="_contribution.Speaker"></SpeakerSelect>
+            <CustomTextarea @bind-Value="_contribution.Abstract" Required="@true" Label="Beschreibung"></CustomTextarea>
         </EditForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton ButtonType="ButtonType.Button" OnClick="Cancel">Abbrechen</MudButton>
+        <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" OnClick="Submit">Speichern</MudButton>
     </DialogActions>
 </MudDialog>

@@ -2,27 +2,26 @@
 
 @if (isLoading)
 {
-    <p>Loading....</p>
+    <div class="spinner"></div>
 } 
 else 
 {
-    <input class="search-bar" @bind-value="@searchTerm" @oninput="SearchTermChanged" />
+    <SearchBar SearchTerm="@searchTerm" SearchTermChanged="@SearchTermChanged"></SearchBar>
 
-    @if (Speakers.Any() && Contributions.Any())
+    @if (Contributions.Any())
     {
         <div class="table-container">
             <ul class="responsive-table">
                 <li class="table-header">
                     <div class="col col-1">Title</div>
-                    <div class="col col-2">Date</div>
+                    <div class="col col-2">Speakers</div>
                     <div class="col col-3">Type</div>
                     <div class="col col-4">Language</div>
                     <div class="col col-5">Primary Tag</div>
                 </li>
-                @foreach (var c in Contributions)
-                {
-                    <TableRow Contribution="c" SearchTerm="@searchTerm" ContributionClicked="() => ContributionClicked(c.Id)"></TableRow>
-                }
+                 <Virtualize Items="@Contributions" Context="c">
+                     <TableRow @key="c.Id" Contribution="c" SearchTerm="@searchTerm" ContributionClicked="EventUtils.AsNonRenderingEventHandler(() => ContributionClicked(c.Id))" />
+                </Virtualize>
             </ul>
         </div>
     } 

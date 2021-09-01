@@ -15,15 +15,13 @@ namespace Blazor.Performance.Client.Services
         private readonly HttpClient _client;
         private static IEnumerable<Contribution> _contributions;
         private static IEnumerable<Speaker> _speakers;
-        private static IEnumerable<Conference> _conferences;
-
 
         public DataService(HttpClient client)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
-        public async Task<IEnumerable<Contribution>> GetContributionsAsync(
+        public async Task<ICollection<Contribution>> GetContributionsAsync(
             CancellationToken cancellationToken = default)
         {
             if (_contributions == null)
@@ -31,7 +29,7 @@ namespace Blazor.Performance.Client.Services
                 _contributions = await GetCollectionAsync<Contribution>("contributions", cancellationToken);
             }
 
-            return _contributions;
+            return _contributions.ToList();
         }
 
         public async Task<Contribution> GetContributionByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -40,8 +38,10 @@ namespace Blazor.Performance.Client.Services
             {
                 _contributions = await GetCollectionAsync<Contribution>("contributions", cancellationToken);
             }
+            var c = _contributions.FirstOrDefault(c => c.Id == id);
+            var cString = JsonSerializer.Serialize(c);
 
-            return _contributions.FirstOrDefault(c => c.Id == id);
+            return JsonSerializer.Deserialize<Contribution>(cString);
         }
 
         public void UpdateContribution(Contribution contribution)
@@ -61,12 +61,39 @@ namespace Blazor.Performance.Client.Services
 
         public async Task<IEnumerable<Speaker>> GetSpeakersAsync(CancellationToken cancellationToken = default)
         {
-            return await GetCollectionAsync<Speaker>("speakers", cancellationToken);
+            if (_speakers == null)
+            {
+                _speakers = await GetCollectionAsync<Speaker>("speakers", cancellationToken);
+            }
+
+            return _speakers;
+        }
+
+        public async Task<string> GetSpeakerByContribution(int id, CancellationToken cancellationToken = default)
+        {
+            if (_speakers == null)
+            {
+                _speakers = await GetCollectionAsync<Speaker>("speakers", cancellationToken);
+            }
+
+            if (_contributions == null)
+            {
+                _contributions = await GetCollectionAsync<Contribution>("contributions", cancellationToken);
+            }
+
+            var contribution = _contributions.FirstOrDefault(c => c.Id == id);
+            if (contribution == null)
+            {
+                return String.Empty;
+            }
+
+            var speakers = _speakers.Where(s => contribution.Speaker.Contains(s.Id));
+            return String.Join(", ", speakers.OrderBy(s => s.FirstName).Select(s => $"{s.FirstName} {s.LastName}"));
         }
 
         private async Task<IEnumerable<T>> GetCollectionAsync<T>(string path,
             CancellationToken cancellationToken = default)
-        {
+        {            
             var jsonString = await _client.GetStringAsync($"sample-data/{path}.json", cancellationToken);
             var result = JsonSerializer.Deserialize<ApiRootResult<T>>(jsonString,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -75,6 +102,7 @@ namespace Blazor.Performance.Client.Services
                 return Enumerable.Empty<T>();
             }
 
+            await Task.Delay(1000);
             return result.Items;
         }
     }

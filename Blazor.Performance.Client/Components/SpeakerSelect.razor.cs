@@ -12,9 +12,10 @@ namespace Blazor.Performance.Client.Components
     public partial class SpeakerSelect
     {
         [Inject] public DataService DataService { get; set; }
-        [Parameter] public HashSet<int> Value { get; set; }
-        [Parameter] public EventCallback<HashSet<int>> ValueChanged { get; set; }
+        [Parameter] public HashSet<int> Values { get; set; }
+        [Parameter] public EventCallback<HashSet<int>> ValuesChanged { get; set; }
 
+        private int value { get; set; } = 0;
         private List<Speaker> _speakers = new();
 
         protected override async Task OnInitializedAsync()
@@ -30,8 +31,8 @@ namespace Blazor.Performance.Client.Components
 
         private async Task SpeakersChanged(HashSet<int> values)
         {
-            Value = values;
-            await ValueChanged.InvokeAsync(values);
+            Values = values;
+            await ValuesChanged.InvokeAsync(values);
         }
         
         private string GetMultiSelectionText(List<string> selectedValues)
