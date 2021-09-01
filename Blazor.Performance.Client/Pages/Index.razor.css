@@ -1,0 +1,13 @@
+﻿div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.table-container {
+    width: 70vw;
+}
+
+.responsive-table {
+    width: 100%;
+}

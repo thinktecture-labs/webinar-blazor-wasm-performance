@@ -1,0 +1,27 @@
+﻿<MudDialog>
+    <DialogContent>
+        <EditForm class="edit-form" Model="_contribution">
+            <div class="group">
+                <input type="text" required="required" @bind-value="_contribution.Title"/><span class="highlight"></span><span class="bar"></span>
+                <label>Title</label>
+            </div>
+            <div class="group">
+                <input type="text" required="required" @bind-value="_contribution.Type"/><span class="highlight"></span><span class="bar"></span>
+                <label>Type</label>
+            </div>
+            <div class="group">
+                <input type="text" required="required" @bind-value="_contribution.PrimaryTag"/><span class="highlight"></span><span class="bar"></span>
+                <label>Primary Tag</label>
+            </div>
+            <SpeakerSelect @bind-Value="_contribution.Speaker"></SpeakerSelect>
+            <div class="group">
+                <textarea type="textarea" rows="5" required="required" @bind-value="_contribution.Abstract" @bind-value:event="oninput"></textarea><span class="highlight"></span><span class="bar"></span>
+                <label>Abstract</label>
+            </div>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>

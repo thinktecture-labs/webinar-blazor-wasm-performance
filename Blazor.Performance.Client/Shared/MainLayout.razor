@@ -1,0 +1,21 @@
+﻿@inherits LayoutComponentBase
+<MudThemeProvider Theme="currentTheme"/>
+<MudDialogProvider
+    FullWidth="true" 
+    MaxWidth="MaxWidth.Large"
+    CloseButton="true"
+    DisableBackdropClick="true"
+    NoHeader="true"
+    Position="DialogPosition.Center"
+/>
+<MudSnackbarProvider/>
+<MudLayout>
+    <MudAppBar Color="Color.Primary">
+        <MudText Typo="Typo.h5">TT-Conf-Search</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@icon" OnClick="DarkMode" Color="Color.Default"></MudIconButton>
+    </MudAppBar>
+    <MudMainContent Class="container">
+        @Body
+    </MudMainContent>
+</MudLayout>
