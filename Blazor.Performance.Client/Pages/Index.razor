@@ -19,9 +19,17 @@ else
                     <div class="col col-4">Language</div>
                     <div class="col col-5">Primary Tag</div>
                 </li>
-                 <Virtualize Items="@Contributions" Context="c">
-                     <TableRow @key="c.Id" Contribution="c" SearchTerm="@searchTerm" ContributionClicked="EventUtils.AsNonRenderingEventHandler(() => ContributionClicked(c.Id))" />
+                <Virtualize ItemsProvider="LoadContributions" Context="c" OverscanCount="15">
+                    <ItemContent>
+                         <TableRow @key="c.Id" Contribution="c" SearchTerm="@searchTerm" ContributionClicked="EventUtils.AsNonRenderingEventHandler(() => ContributionClicked(c.Id))" />
+                    </ItemContent>
+                    <Placeholder>
+                        <p>Loading...</p>
+                    </Placeholder>
                 </Virtualize>
+                 @*<Virtualize Items="@Contributions" Context="c">
+                     <TableRow @key="c.Id" Contribution="c" SearchTerm="@searchTerm" ContributionClicked="EventUtils.AsNonRenderingEventHandler(() => ContributionClicked(c.Id))" />
+                </Virtualize>*@
             </ul>
         </div>
     } 

@@ -2,6 +2,7 @@
 using Blazor.Performance.Client.Models;
 using Blazor.Performance.Client.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using MudBlazor;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,18 @@ namespace Blazor.Performance.Client.Pages
             allContributions = Contributions;
             isLoading = false;
             await base.OnInitializedAsync();
+        }
+
+        private async ValueTask<ItemsProviderResult<Contribution>> LoadContributions(
+            ItemsProviderRequest request)
+        {
+            var count = await DataService.GetContributionCountAsync(request.CancellationToken);
+
+            var numContributions = Math.Min(request.Count, count - request.StartIndex);
+            var contributions =
+                await DataService.GetContributionsAsync(request.StartIndex, numContributions,
+                    request.CancellationToken);
+            return new ItemsProviderResult<Contribution>(contributions, count);
         }
 
         private void SearchTermChanged(string term)

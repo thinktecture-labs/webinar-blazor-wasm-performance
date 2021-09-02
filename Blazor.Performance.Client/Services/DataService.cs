@@ -32,6 +32,27 @@ namespace Blazor.Performance.Client.Services
             return _contributions.ToList();
         }
 
+        public async Task<ICollection<Contribution>> GetContributionsAsync(int skip, int take,
+            CancellationToken cancellationToken = default)
+        {
+            if (_contributions == null)
+            {
+                _contributions = await GetCollectionAsync<Contribution>("contributions", cancellationToken);
+            }
+            await Task.Delay(100);
+            return _contributions.Skip(skip).Take(take).ToList();
+        }
+
+        public async Task<int> GetContributionCountAsync(CancellationToken cancellationToken)
+        {
+            if (_contributions == null)
+            {
+                _contributions = await GetCollectionAsync<Contribution>("contributions", cancellationToken);
+            }
+
+            return _contributions.Count();
+        }
+
         public async Task<Contribution> GetContributionByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             if (_contributions == null)
