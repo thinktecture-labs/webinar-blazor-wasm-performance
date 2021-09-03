@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Blazor.Performance.Client.Components
+namespace Blazor.Performance.Client.Components.Form
 {
     public partial class CustomTextarea : IHandleEvent
     {

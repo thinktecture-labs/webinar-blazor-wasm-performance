@@ -1,4 +1,5 @@
-﻿using Blazor.Performance.Client.Components;
+﻿using Blazor.Performance.Client.Components.Collections;
+using Blazor.Performance.Client.Components.Form;
 using Blazor.Performance.Client.Models;
 using Blazor.Performance.Client.Services;
 using Microsoft.AspNetCore.Components;
@@ -17,15 +18,15 @@ namespace Blazor.Performance.Client.Pages
         [Inject] public IDialogService DialogService { get; set; }
 
         private bool isLoading = false;
+        private bool searching = false;
         private string searchTerm = String.Empty;
         private ICollection<Contribution> Contributions = new List<Contribution>();
-        private ICollection<Contribution> allContributions = new List<Contribution>();
+        private ContributionVirtualizeWithProvider _virtualize;
 
         protected override async Task OnInitializedAsync()
         {
             isLoading = true;
             Contributions = await DataService.GetContributionsAsync();
-            allContributions = Contributions;
             isLoading = false;
             await base.OnInitializedAsync();
         }
@@ -33,23 +34,29 @@ namespace Blazor.Performance.Client.Pages
         private async ValueTask<ItemsProviderResult<Contribution>> LoadContributions(
             ItemsProviderRequest request)
         {
-            var count = await DataService.GetContributionCountAsync(request.CancellationToken);
+            try
+            {
+                var count = await DataService.GetContributionCountAsync(searchTerm, request.CancellationToken);
 
-            var numContributions = Math.Min(request.Count, count - request.StartIndex);
-            var contributions =
-                await DataService.GetContributionsAsync(request.StartIndex, numContributions,
-                    request.CancellationToken);
-            return new ItemsProviderResult<Contribution>(contributions, count);
+                var numContributions = Math.Min(request.Count, count - request.StartIndex);
+                var contributions =
+                    await DataService.GetContributionsAsync(searchTerm, request.StartIndex, numContributions,
+                        request.CancellationToken);
+                return new ItemsProviderResult<Contribution>(contributions, count);
+            }
+            catch(OperationCanceledException ex)
+            {
+                Console.WriteLine("Current request was canceled.");
+                return new ItemsProviderResult<Contribution>(new List<Contribution>(), 0);
+            }
         }
 
-        private void SearchTermChanged(string term)
+        private async Task SearchTermChanged(string term)
         {
-            Contributions = String.IsNullOrWhiteSpace(term) 
-                ? allContributions 
-                : allContributions
-                    .Where(c => c.Title.Contains(term))
-                    .ToList();
+            searching = true;
+            Contributions = (await DataService.GetContributionsAsync(term)).ToList();
             searchTerm = term;
+            searching = false;
         }
 
         private async Task ContributionClicked(int id)
@@ -58,9 +65,9 @@ namespace Blazor.Performance.Client.Pages
             parameters.Add("Id", id);
             var dialogRef = DialogService.Show<EditContribution>("Simple Dialog", parameters);
             var result = await dialogRef.Result;
-            if (!result.Cancelled)
+            if (!result.Cancelled && result.Data is Contribution con)
             {
-                Contributions = await DataService.GetContributionsAsync();
+                await _virtualize.ReloadContributions();
                 StateHasChanged();
             }
         }

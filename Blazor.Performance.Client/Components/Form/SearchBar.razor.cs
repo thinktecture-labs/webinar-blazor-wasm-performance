@@ -3,9 +3,9 @@ using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
 
-namespace Blazor.Performance.Client.Components
+namespace Blazor.Performance.Client.Components.Form
 {
-    public partial class SearchBar: IDisposable
+    public partial class SearchBar : IDisposable
     {
         [Inject] public IJSRuntime JS { get; set; }
 
@@ -16,7 +16,7 @@ namespace Blazor.Performance.Client.Components
 
         private ElementReference _searchBarElement;
         private DotNetObjectReference<SearchBar> _selfReference;
-        private int _valueHashCode;                       
+        private int _valueHashCode;
 
         public void Dispose() => _selfReference?.Dispose();
 
@@ -35,7 +35,7 @@ namespace Blazor.Performance.Client.Components
         {
             var lastHashCode = _valueHashCode;
             _valueHashCode = SearchTerm?.GetHashCode() ?? 0;
-            return _valueHashCode != lastHashCode;            
+            return _valueHashCode != lastHashCode;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

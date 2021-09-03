@@ -1,0 +1,21 @@
+﻿<div class="table-container">
+	<ul class="responsive-table">
+		<li class="table-header">
+			<div class="col col-1">Title</div>
+			<div class="col col-2">Speakers</div>
+			<div class="col col-3">Type</div>
+			<div class="col col-4">Language</div>
+			<div class="col col-5">Primary Tag</div>
+		</li>
+		@if (Searching)
+		{
+			<div class="spinner" />
+		}
+		else
+		{
+			<Virtualize Items="@Contributions" Context="c">
+				<TableRow @key="c.Id" Contribution="c" SearchTerm="@SearchTerm" ContributionClicked="EventUtils.AsNonRenderingEventHandler(() => ContributionItemClicked(c.Id))" />
+			</Virtualize>
+		}
+	</ul>
+</div>

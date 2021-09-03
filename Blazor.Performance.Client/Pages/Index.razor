@@ -6,72 +6,26 @@
 }
 else if (!isLoading && Contributions.Any())
 {
+	<SearchBar SearchTerm="@searchTerm" SearchTermChanged="@SearchTermChanged"></SearchBar>
+
 	<MudTabs>
 		<MudTabPanel Text="For Loop">
-			<SearchBar SearchTerm="@searchTerm" SearchTermChanged="@SearchTermChanged"></SearchBar>
-
-			<div class="table-container">
-				<ul class="responsive-table">
-					<li class="table-header">
-						<div class="col col-1">Title</div>
-						<div class="col col-2">Speakers</div>
-						<div class="col col-3">Type</div>
-						<div class="col col-4">Language</div>
-						<div class="col col-5">Primary Tag</div>
-					</li>
-					@foreach(var c in Contributions)
-					{
-						<TableRow @key="c.Id" Contribution="c" SearchTerm="@searchTerm" ContributionClicked="EventUtils.AsNonRenderingEventHandler(() => ContributionClicked(c.Id))" />
-					}
-				</ul>
+			<div class="tab-container">
+				<ContributionForLoop Contributions="Contributions" SearchTerm="@searchTerm" Searching="@searching" ContributionClicked="ContributionClicked"></ContributionForLoop>
 			</div>
 		</MudTabPanel>
 		<MudTabPanel Text="Virtualize">
-			<SearchBar SearchTerm="@searchTerm" SearchTermChanged="@SearchTermChanged"></SearchBar>
-
-			<div class="table-container">
-				<ul class="responsive-table">
-					<li class="table-header">
-						<div class="col col-1">Title</div>
-						<div class="col col-2">Speakers</div>
-						<div class="col col-3">Type</div>
-						<div class="col col-4">Language</div>
-						<div class="col col-5">Primary Tag</div>
-					</li>
-					<Virtualize Items="@Contributions" Context="c">
-						<TableRow @key="c.Id" Contribution="c" SearchTerm="@searchTerm" ContributionClicked="EventUtils.AsNonRenderingEventHandler(() => ContributionClicked(c.Id))" />
-					</Virtualize>
-				</ul>
+			<div class="tab-container">
+				<ContributionVirtualize Contributions="Contributions" SearchTerm="@searchTerm" Searching="@searching" ContributionClicked="ContributionClicked"></ContributionVirtualize>
 			</div>
 		</MudTabPanel>
 		<MudTabPanel Text="Virtualize with ItemProvider">
-			<SearchBar SearchTerm="@searchTerm" SearchTermChanged="@SearchTermChanged"></SearchBar>
-
-			<div class="table-container">
-				<ul class="responsive-table">
-					<li class="table-header">
-						<div class="col col-1">Title</div>
-						<div class="col col-2">Speakers</div>
-						<div class="col col-3">Type</div>
-						<div class="col col-4">Language</div>
-						<div class="col col-5">Primary Tag</div>
-					</li>
-					<Virtualize ItemsProvider="LoadContributions" Context="c" OverscanCount="15">
-						<ItemContent>
-							<TableRow @key="c.Id" Contribution="c" SearchTerm="@searchTerm" ContributionClicked="EventUtils.AsNonRenderingEventHandler(() => ContributionClicked(c.Id))" />
-						</ItemContent>
-						@**Placeholder hat noch macken sobald es sich um eine komplett andere Komponente handelt*@
-						@*<Placeholder>
-							<p>Loading...</p>
-						</Placeholder>*@
-					</Virtualize>
-					@*<Virtualize Items="@Contributions" Context="c">
-						<TableRow @key="c.Id" Contribution="c" SearchTerm="@searchTerm" ContributionClicked="EventUtils.AsNonRenderingEventHandler(() => ContributionClicked(c.Id))" />
-					</Virtualize>*@
-				</ul>
+			<div class="tab-container">
+				<ContributionVirtualizeWithProvider @ref="_virtualize" SearchTerm="@searchTerm" Searching="@searching" ContributionClicked="ContributionClicked"></ContributionVirtualizeWithProvider>
 			</div>
 		</MudTabPanel>
 	</MudTabs>
+
 }
 else
 {

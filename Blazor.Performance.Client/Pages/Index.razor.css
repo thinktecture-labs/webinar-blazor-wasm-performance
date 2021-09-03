@@ -10,3 +10,9 @@
 .responsive-table {
     width: 100%;
 }
+
+.tab-container {
+    padding: 24px;
+    width: 100%;
+    display: block;
+}

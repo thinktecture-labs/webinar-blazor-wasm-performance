@@ -1,18 +1,11 @@
 using Blazor.Performance.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Blazor.Performance.Api
 {
@@ -36,10 +29,9 @@ namespace Blazor.Performance.Api
                     builder =>
                     {
                         builder
-                            .AllowCredentials()
                             .AllowAnyHeader()
-                            .WithHeaders(new[] { "GET", "HEAD", "PUT", "POST", "DELETE" })
-                            .WithOrigins("https://localhost:5001");
+                            .AllowAnyMethod()
+                            .AllowAnyOrigin();
                     });
             });
 

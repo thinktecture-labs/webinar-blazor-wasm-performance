@@ -19,16 +19,34 @@ namespace Blazor.Performance.Api.Services
             return LoadDataAsync();
         }
 
-        public async Task<List<Contribution>> GetContributionsAsync()
+        public async Task<List<Contribution>> GetContributionsAsync(string searchTerm = "")
         {
-            await Task.Delay(100);
-            return _root.Contributions;
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return _root.Contributions;
+            }
+            return _root.Contributions.Where(c => c.Title.Contains(searchTerm, System.StringComparison.InvariantCultureIgnoreCase)).ToList();
         }
 
-        public async Task<Contribution> GetContributionAsync(int id, CancellationToken cancellationToken)
+        public Contribution GetContribution(int id, CancellationToken cancellationToken)
         {
             var contribution = _root?.Contributions.FirstOrDefault(c => c.Id == id);
             return contribution;
+        }
+
+        public void AddContribution(Contribution contribution)
+        {
+            _root.Contributions.Add(contribution);
+        }
+
+        public void UpdateContribution(Contribution contribution)
+        {
+            _root.Contributions = _root.Contributions.Select((x, i) => x.Id == contribution.Id ? contribution : x).ToList();
+        }
+
+        public void RemoveContribution(int contributionId)
+        {
+            _root.Contributions = _root.Contributions.Where(c => c.Id == contributionId).ToList();
         }
 
         private async Task LoadDataAsync()

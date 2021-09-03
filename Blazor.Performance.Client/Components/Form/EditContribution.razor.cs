@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Threading.Tasks;
 
-namespace Blazor.Performance.Client.Components
+namespace Blazor.Performance.Client.Components.Form
 {
     public partial class EditContribution
     {
@@ -20,10 +20,10 @@ namespace Blazor.Performance.Client.Components
             await base.OnInitializedAsync();
         }
 
-        private void Submit()
+        private async Task Submit()
         {
-            DataService.UpdateContribution(_contribution);
-            MudDialog.Close(DialogResult.Ok(true));
+            await DataService.UpdateContribution(_contribution);
+            MudDialog.Close(DialogResult.Ok(_contribution));
         }
         void Cancel() => MudDialog.Cancel();
     }

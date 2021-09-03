@@ -21,64 +21,41 @@ namespace Blazor.Performance.Client.Services
             _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
-        public async Task<ICollection<Contribution>> GetContributionsAsync(
+        public async Task<ICollection<Contribution>> GetContributionsAsync(string searchTerm = "", int skip = 0, int take = Int32.MaxValue,
             CancellationToken cancellationToken = default)
         {
-            if (_contributions == null)
-            {
-                // TODO: Map new ID
-                _contributions = await GetCollectionAsync<Contribution>("contributions", cancellationToken);
-            }
-
-            return _contributions.ToList();
+            return (await GetCollectionAsync<Contribution>($"contributions?searchTerm={searchTerm}&skip={skip}&take={take}", cancellationToken)).ToList();
         }
 
-        public async Task<ICollection<Contribution>> GetContributionsAsync(int skip, int take,
-            CancellationToken cancellationToken = default)
+        public async Task<int> GetContributionCountAsync(string searchTerm = "", CancellationToken cancellationToken = default)
         {
-            if (_contributions == null)
-            {
-                _contributions = await GetCollectionAsync<Contribution>("contributions", cancellationToken);
-            }
-            await Task.Delay(100);
-            return _contributions.Skip(skip).Take(take).ToList();
-        }
+            var request = new HttpRequestMessage(HttpMethod.Head, $"contributions?searchTerm={searchTerm}");
 
-        public async Task<int> GetContributionCountAsync(CancellationToken cancellationToken)
-        {
-            if (_contributions == null)
+            using var httpResponse = await _client.SendAsync(request, cancellationToken);
+            var countHeader = httpResponse.Headers.GetValues("X-Contribution-Count")?.FirstOrDefault();
+            var count = 0;
+            if (!string.IsNullOrWhiteSpace(countHeader))
             {
-                _contributions = await GetCollectionAsync<Contribution>("contributions", cancellationToken);
+                int.TryParse(countHeader, out count);
             }
-
-            return _contributions.Count();
+            Console.WriteLine($"ContributionCount: {count}");
+            return count;
         }
 
         public async Task<Contribution> GetContributionByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            if (_contributions == null)
-            {
-                _contributions = await GetCollectionAsync<Contribution>("contributions", cancellationToken);
-            }
-            var c = _contributions.FirstOrDefault(c => c.Id == id);
-            var cString = JsonSerializer.Serialize(c);
-
-            return JsonSerializer.Deserialize<Contribution>(cString);
+            Console.WriteLine($"Load Contribution for Id: {id}");
+            return await _client.GetFromJsonAsync<Contribution>($"contributions/{id}", cancellationToken);
         }
 
-        public void UpdateContribution(Contribution contribution)
+        public Task UpdateContribution(Contribution contribution, CancellationToken cancellationToken = default)
         {
-            _contributions = _contributions.Select((x, i) => x.Id == contribution.Id ? contribution : x);
+            return _client.PutAsJsonAsync<Contribution>($"contributions/{contribution.Id}", contribution, cancellationToken);
         }
         
-        public void RemoveContributionAsync(int contributionId)
+        public Task RemoveContributionAsync(int contributionId, CancellationToken cancellationToken = default)
         {
-            _contributions = _contributions.Where(c => c.Id == contributionId);
-        }
-
-        public async Task<IEnumerable<Conference>> GetConferencesAsync(CancellationToken cancellationToken = default)
-        {
-            return await GetCollectionAsync<Conference>("conferences", cancellationToken);
+            return _client.DeleteAsync($"contributions/{contributionId}", cancellationToken);
         }
 
         public async Task<IEnumerable<Speaker>> GetSpeakersAsync(CancellationToken cancellationToken = default)
@@ -117,7 +94,6 @@ namespace Blazor.Performance.Client.Services
             CancellationToken cancellationToken = default)
         {            
             var result = await _client.GetFromJsonAsync<IEnumerable<T>>($"{path}", cancellationToken);
-            await Task.Delay(1000);
             return result;
         }
     }

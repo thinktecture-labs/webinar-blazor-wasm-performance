@@ -7,7 +7,7 @@ using Blazor.Performance.Client.Models;
 using Blazor.Performance.Client.Services;
 using Microsoft.AspNetCore.Components;
 
-namespace Blazor.Performance.Client.Components
+namespace Blazor.Performance.Client.Components.Form
 {
     public partial class SpeakerSelect
     {

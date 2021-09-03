@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Blazor.Performance.Client.Components
+namespace Blazor.Performance.Client.Components.Form
 {
     public partial class CustomInput : IHandleEvent
     {
