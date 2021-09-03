@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Blazor.Performance.Client.Models;
-using Blazor.Performance.Client.Utils;
 
 namespace Blazor.Performance.Client.Services
 {
@@ -26,6 +26,7 @@ namespace Blazor.Performance.Client.Services
         {
             if (_contributions == null)
             {
+                // TODO: Map new ID
                 _contributions = await GetCollectionAsync<Contribution>("contributions", cancellationToken);
             }
 
@@ -115,16 +116,9 @@ namespace Blazor.Performance.Client.Services
         private async Task<IEnumerable<T>> GetCollectionAsync<T>(string path,
             CancellationToken cancellationToken = default)
         {            
-            var jsonString = await _client.GetStringAsync($"sample-data/{path}.json", cancellationToken);
-            var result = JsonSerializer.Deserialize<ApiRootResult<T>>(jsonString,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            if (result == null)
-            {
-                return Enumerable.Empty<T>();
-            }
-
+            var result = await _client.GetFromJsonAsync<IEnumerable<T>>($"{path}", cancellationToken);
             await Task.Delay(1000);
-            return result.Items;
+            return result;
         }
     }
 }

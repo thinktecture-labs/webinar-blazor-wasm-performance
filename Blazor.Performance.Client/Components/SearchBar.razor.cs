@@ -48,10 +48,5 @@ namespace Blazor.Performance.Client.Components
                     _searchBarElement, _selfReference, 500);
             }
         }
-
-        private async Task InputChanged(ChangeEventArgs e)
-        {
-            await SearchTermChanged.InvokeAsync(e.Value.ToString());
-        }
     }
 }

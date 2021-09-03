@@ -13,17 +13,15 @@ namespace Blazor.Performance.Client.Components
         [Parameter] public string SearchTerm { get; set; }
         [Parameter] public EventCallback ContributionClicked { get; set; }
 
-        private string speakers = String.Empty;
+        private string speakers = "TBD";
 
         protected override async Task OnInitializedAsync()
         {
-            speakers = await DataService.GetSpeakerByContribution(Contribution.Id);
             await base.OnInitializedAsync();
         }
 
         protected override async Task OnParametersSetAsync()
         {
-            speakers = await DataService.GetSpeakerByContribution(Contribution.Id);
             await base.OnParametersSetAsync();
         }
 
