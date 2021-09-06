@@ -8,20 +8,20 @@ else if (!isLoading && Contributions.Any())
 {
 	<SearchBar SearchTerm="@searchTerm" SearchTermChanged="@SearchTermChanged"></SearchBar>
 
-	<MudTabs>
+	<MudTabs ActivePanelIndex="@activeTabIndex" ActivePanelIndexChanged="ActiveIndexChanged">
 		<MudTabPanel Text="For Loop">
 			<div class="tab-container">
-				<ContributionForLoop Contributions="Contributions" SearchTerm="@searchTerm" Searching="@searching" ContributionClicked="ContributionClicked"></ContributionForLoop>
+				<ContributionForLoop Contributions="Contributions" SearchTerm="@searchTerm" Searching="@searching" ContributionClicked="EventUtils.AsNonRenderingEventHandler((int id) => ContributionClicked(id))"></ContributionForLoop>
 			</div>
 		</MudTabPanel>
 		<MudTabPanel Text="Virtualize">
 			<div class="tab-container">
-				<ContributionVirtualize Contributions="Contributions" SearchTerm="@searchTerm" Searching="@searching" ContributionClicked="ContributionClicked"></ContributionVirtualize>
+				<ContributionVirtualize Contributions="Contributions" SearchTerm="@searchTerm" Searching="@searching" ContributionClicked="EventUtils.AsNonRenderingEventHandler((int id) => ContributionClicked(id))"></ContributionVirtualize>
 			</div>
 		</MudTabPanel>
 		<MudTabPanel Text="Virtualize with ItemProvider">
 			<div class="tab-container">
-				<ContributionVirtualizeWithProvider @ref="_virtualize" SearchTerm="@searchTerm" Searching="@searching" ContributionClicked="ContributionClicked"></ContributionVirtualizeWithProvider>
+				<ContributionVirtualizeWithProvider @ref="_virtualize" SearchTerm="@searchTerm" Searching="@searching" ContributionClicked="EventUtils.AsNonRenderingEventHandler((int id) => ContributionClicked(id))"></ContributionVirtualizeWithProvider>
 			</div>
 		</MudTabPanel>
 	</MudTabs>

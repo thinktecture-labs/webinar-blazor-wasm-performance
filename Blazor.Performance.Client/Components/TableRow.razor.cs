@@ -13,17 +13,27 @@ namespace Blazor.Performance.Client.Components
         [Parameter] public string SearchTerm { get; set; }
         [Parameter] public EventCallback ContributionClicked { get; set; }
 
-        private string speakers = "TBD";
+        private int currentContributionId;
+        private string currentContributionTitle;
+        private string currentSearchTerm;
+        private bool shouldRender;
 
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
         }
 
-        protected override async Task OnParametersSetAsync()
+        protected override void OnParametersSet()
         {
-            await base.OnParametersSetAsync();
+            shouldRender = Contribution.Id != currentContributionId || Contribution.Title != currentContributionTitle
+                || SearchTerm != currentSearchTerm;
+
+            currentContributionId = Contribution.Id;
+            currentContributionTitle = Contribution.Title;
+            currentSearchTerm = SearchTerm;
         }
+
+        protected override bool ShouldRender() => true;
 
         protected override void OnAfterRender(bool firstRender)
         {

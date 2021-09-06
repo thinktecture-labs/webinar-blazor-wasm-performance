@@ -15,7 +15,7 @@ namespace Blazor.Performance.Client.Components.Form
         [Parameter] public HashSet<int> Values { get; set; }
         [Parameter] public EventCallback<HashSet<int>> ValuesChanged { get; set; }
 
-        private int value { get; set; } = 0;
+        private int value = 0;
         private List<Speaker> _speakers = new();
 
         protected override async Task OnInitializedAsync()

@@ -3,7 +3,7 @@ using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
 
-namespace Blazor.Performance.Client.Components.Form
+namespace Blazor.Performance.Client.Components
 {
     public partial class SearchBar : IDisposable
     {

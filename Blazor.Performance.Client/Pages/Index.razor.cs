@@ -17,6 +17,7 @@ namespace Blazor.Performance.Client.Pages
         [Inject] public DataService DataService { get; set; }
         [Inject] public IDialogService DialogService { get; set; }
 
+        private int activeTabIndex = 0;
         private bool isLoading = false;
         private bool searching = false;
         private string searchTerm = String.Empty;
@@ -31,32 +32,17 @@ namespace Blazor.Performance.Client.Pages
             await base.OnInitializedAsync();
         }
 
-        private async ValueTask<ItemsProviderResult<Contribution>> LoadContributions(
-            ItemsProviderRequest request)
-        {
-            try
-            {
-                var count = await DataService.GetContributionCountAsync(searchTerm, request.CancellationToken);
-
-                var numContributions = Math.Min(request.Count, count - request.StartIndex);
-                var contributions =
-                    await DataService.GetContributionsAsync(searchTerm, request.StartIndex, numContributions,
-                        request.CancellationToken);
-                return new ItemsProviderResult<Contribution>(contributions, count);
-            }
-            catch(OperationCanceledException ex)
-            {
-                Console.WriteLine("Current request was canceled.");
-                return new ItemsProviderResult<Contribution>(new List<Contribution>(), 0);
-            }
-        }
-
         private async Task SearchTermChanged(string term)
         {
             searching = true;
             Contributions = (await DataService.GetContributionsAsync(term)).ToList();
             searchTerm = term;
             searching = false;
+        }
+
+        private void ActiveIndexChanged(int index)
+        {
+            activeTabIndex = index;
         }
 
         private async Task ContributionClicked(int id)
@@ -67,7 +53,14 @@ namespace Blazor.Performance.Client.Pages
             var result = await dialogRef.Result;
             if (!result.Cancelled && result.Data is Contribution con)
             {
-                await _virtualize.ReloadContributions();
+                if (activeTabIndex <= 1)
+                {
+                    Contributions = await DataService.GetContributionsAsync();
+                }
+                else
+                {
+                    await _virtualize.ReloadContributions();
+                }
                 StateHasChanged();
             }
         }

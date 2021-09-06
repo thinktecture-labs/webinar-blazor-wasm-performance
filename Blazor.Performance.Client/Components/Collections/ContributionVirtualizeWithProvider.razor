@@ -17,7 +17,6 @@
 				<ItemContent>
 					<TableRow @key="c.Id" Contribution="c" SearchTerm="@SearchTerm" ContributionClicked="EventUtils.AsNonRenderingEventHandler(() => ContributionItemClicked(c.Id))" />
 				</ItemContent>
-				@**Placeholder hat noch macken sobald es sich um eine komplett andere Komponente handelt*@
 				<Placeholder>
 					<li class="table-row">
 						<div class="col col-1"><MudSkeleton /></div>
